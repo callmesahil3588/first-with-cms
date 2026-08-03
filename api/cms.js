@@ -217,6 +217,10 @@ async function gh(path, opts, c) {
   if (res.status === 404) { const e = new Error('not_found'); e.notFound = true; throw e; }
   if (!res.ok) {
     const text = await res.text();
+    if (res.status === 401) throw new Error('GitHub rejected the token. It is wrong or has expired — make a new one and update GITHUB_TOKEN in Vercel.');
+    if (res.status === 403) throw new Error('GitHub refused the request. Check the token has Contents: Read and write on this repository.');
+    if (res.status === 409 || /not a fast forward/i.test(text)) throw new Error('Someone (or another save) changed the repo at the same time. Wait a few seconds and save again.');
+    if (/BadObjectState/.test(text)) throw new Error('GitHub refused the file change (BadObjectState). Usually a delete for a file that is not there. Reload the panel and try again.');
     throw new Error('GitHub ' + res.status + ': ' + text.slice(0, 300));
   }
   return res.status === 204 ? null : res.json();
@@ -234,15 +238,44 @@ async function readFile(path, c) {
 
 /* Commit several files in ONE commit, so one publish = one deploy.
    files: [{ path, text }] or [{ path, base64 }] or [{ path, remove:true }] */
+async function pathExists(path, c) {
+  try {
+    await gh('/repos/' + c.repo + '/contents/' + encodeURI(path) + '?ref=' + c.branch, {}, c);
+    return true;
+  } catch (e) {
+    if (e.notFound) return false;
+    throw e;
+  }
+}
+
 async function commitFiles(files, message, c) {
   const ref = await gh('/repos/' + c.repo + '/git/ref/heads/' + c.branch, {}, c);
   const headSha = ref.object.sha;
-  const commit = await gh(   '/repos/' + c.repo + '/git/commits/' + headSha,   {},   c );  const head = {   tree: commit.tree }; gh('/repos/' + c.repo + '/git/commits/' + headSha, {}, c);
+  const head = await gh('/repos/' + c.repo + '/git/commits/' + headSha, {}, c);
+  const baseTree = head.tree.sha;
+
+  /* GitHub's create-tree endpoint fails the WHOLE request if you ask it to
+     delete a file that isn't there ("Returns an error if you try to delete a
+     file that does not exist"). That happens routinely here — saving a brand
+     new post as a draft tries to remove a page that was never written. So
+     work out which paths really exist and drop the impossible deletions. */
+  let existing = null;
+  if (files.some((f) => f.remove)) {
+    try {
+      const full = await gh('/repos/' + c.repo + '/git/trees/' + baseTree + '?recursive=1', {}, c);
+      if (full && !full.truncated && Array.isArray(full.tree)) {
+        existing = new Set(full.tree.filter((t) => t.type === 'blob').map((t) => t.path));
+      }
+    } catch (e) {
+      existing = null; // fall back to checking one path at a time
+    }
+  }
 
   const tree = [];
   for (const f of files) {
     if (f.remove) {
-      tree.push({ path: f.path, mode: '100644', type: 'blob', sha: null });
+      const there = existing ? existing.has(f.path) : await pathExists(f.path, c);
+      if (there) tree.push({ path: f.path, mode: '100644', type: 'blob', sha: null });
       continue;
     }
     const payload = f.base64 !== undefined
@@ -252,13 +285,13 @@ async function commitFiles(files, message, c) {
     tree.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha });
   }
 
+  /* nothing left to do (e.g. deleting something already gone) */
+  if (!tree.length) return headSha;
+
   const newTree = await gh('/repos/' + c.repo + '/git/trees', {
-  method: 'POST',
-  body: JSON.stringify({
-    tree: tree,
-    base_tree: head.commit.tree.sha
-  }),
-}, c);
+    method: 'POST',
+    body: JSON.stringify({ base_tree: baseTree, tree }),
+  }, c);
 
   const commit = await gh('/repos/' + c.repo + '/git/commits', {
     method: 'POST',
@@ -266,12 +299,9 @@ async function commitFiles(files, message, c) {
   }, c);
 
   await gh('/repos/' + c.repo + '/git/refs/heads/' + c.branch, {
-  method: 'PATCH',
-  body: JSON.stringify({
-    sha: commit.sha,
-    force: false
-  }),
-}, c);
+    method: 'PATCH',
+    body: JSON.stringify({ sha: commit.sha }),
+  }, c);
 
   return commit.sha;
 }
@@ -588,14 +618,21 @@ module.exports = async function handler(req, res) {
       files.push({ path: 'data/posts.json', text: JSON.stringify(posts, null, 2) + '\n' });
       files.push({ path: 'blog/index.html', text: blogIndexPage(live, c) });
 
+      let warning = '';
       const home = await readFile('index.html', c);
-      if (home) {
+      if (!home) {
+        warning = 'Saved, but no index.html found in the repo root, so the homepage cards were not updated.';
+      } else {
         const updated = updateHomepage(home, live);
-        if (updated && updated !== home) files.push({ path: 'index.html', text: updated });
+        if (updated === null) {
+          warning = 'Saved, but the <!--POSTS_START--> comment is missing from index.html, so the homepage cards were not updated.';
+        } else if (updated !== home) {
+          files.push({ path: 'index.html', text: updated });
+        }
       }
 
       const sha = await commitFiles(files, (draft ? 'draft: ' : 'post: ') + title, c);
-      res.status(200).json({ ok: true, slug, draft, commit: sha.slice(0, 7), url: '/blog/' + slug });
+      res.status(200).json({ ok: true, slug, draft, commit: sha.slice(0, 7), url: '/blog/' + slug, warning: warning });
       return;
     }
 
