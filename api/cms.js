@@ -237,7 +237,7 @@ async function readFile(path, c) {
 async function commitFiles(files, message, c) {
   const ref = await gh('/repos/' + c.repo + '/git/ref/heads/' + c.branch, {}, c);
   const headSha = ref.object.sha;
-  const head = await gh('/repos/' + c.repo + '/git/commits/' + headSha, {}, c);
+  const commit = await gh(   '/repos/' + c.repo + '/git/commits/' + headSha,   {},   c );  const head = {   tree: commit.tree }; gh('/repos/' + c.repo + '/git/commits/' + headSha, {}, c);
 
   const tree = [];
   for (const f of files) {
@@ -253,9 +253,12 @@ async function commitFiles(files, message, c) {
   }
 
   const newTree = await gh('/repos/' + c.repo + '/git/trees', {
-    method: 'POST',
-    body: JSON.stringify({ base_tree: head.tree.sha, tree }),
-  }, c);
+  method: 'POST',
+  body: JSON.stringify({
+    tree: tree,
+    base_tree: head.commit.tree.sha
+  }),
+}, c);
 
   const commit = await gh('/repos/' + c.repo + '/git/commits', {
     method: 'POST',
@@ -263,9 +266,12 @@ async function commitFiles(files, message, c) {
   }, c);
 
   await gh('/repos/' + c.repo + '/git/refs/heads/' + c.branch, {
-    method: 'PATCH',
-    body: JSON.stringify({ sha: commit.sha }),
-  }, c);
+  method: 'PATCH',
+  body: JSON.stringify({
+    sha: commit.sha,
+    force: false
+  }),
+}, c);
 
   return commit.sha;
 }
