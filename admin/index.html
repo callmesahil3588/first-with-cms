@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Write a post</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&amp;family=Instrument+Sans:wght@400;500;600&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginView" class="login-card">
+  <h1>Sahil<em style="color:var(--signal);font-style:normal">.</em></h1>
+  <p>Enter your password to write.</p>
+  <div class="field">
+    <label for="pw">Password</label>
+    <input type="password" id="pw" autocomplete="current-password" />
+  </div>
+  <button class="btn" id="loginBtn" style="width:100%;justify-content:center">Log in</button>
+  <div class="admin-msg" id="loginMsg"></div>
+</div>
+
+<!-- ============ PANEL ============ -->
+<div id="panelView" class="admin-wrap" style="display:none">
+
+  <div class="admin-top">
+    <h1 id="panelTitle">New post</h1>
+    <div style="display:flex;gap:8px">
+      <button class="mini" id="newBtn">+ New post</button>
+      <button class="mini" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+
+  <!-- existing posts -->
+  <div class="card" style="margin-bottom:22px">
+    <label style="font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)">Your posts</label>
+    <ul class="post-list" id="postList"><li style="color:var(--ink-soft);font-size:.9rem">Loading…</li></ul>
+  </div>
+
+  <!-- editor -->
+  <div class="card">
+    <div class="field">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="Why your ROAS looks great and your business isn't growing" />
+      <div class="hint">Link will be: <code id="slugPreview">/blog/…</code> <button type="button" class="mini" id="editSlug" style="margin-left:6px">edit link</button></div>
+    </div>
+
+    <div class="field" id="slugField" style="display:none">
+      <label for="slug">Link (slug)</label>
+      <input type="text" id="slug" />
+      <div class="hint">Only change this before publishing. Changing it later breaks the old link.</div>
+    </div>
+
+    <div class="field">
+      <label for="description">Meta description</label>
+      <textarea id="description" style="min-height:70px;font-family:var(--body);font-size:.95rem" maxlength="200" placeholder="One clear sentence. This shows in Google and in link previews."></textarea>
+      <div class="hint"><span id="descCount">0</span>/160 characters is the sweet spot.</div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="">— none —</option>
+          <option>Paid Media</option>
+          <option>SEO</option>
+          <option>CRO</option>
+          <option>Analytics</option>
+          <option>Email</option>
+          <option>Social</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="date">Publish date</label>
+        <input type="date" id="date" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Banner image</label>
+      <div class="banner-drop" id="bannerDrop">Click to choose an image &middot; 1200&times;630 is ideal</div>
+      <input type="file" id="bannerInput" accept="image/*" style="display:none" />
+      <div class="banner-preview" id="bannerPreview"><img id="bannerImg" alt="" /></div>
+      <div class="hint" id="bannerHint">Keep it under 1MB if you can — big images slow the page down.</div>
+    </div>
+
+    <div class="field">
+      <label>Post</label>
+      <div class="tabs">
+        <button type="button" class="on" id="tabWrite">Write</button>
+        <button type="button" id="tabPreview">Preview</button>
+      </div>
+      <div id="writePane">
+        <div class="toolbar">
+          <button type="button" data-fmt="h2">Heading</button>
+          <button type="button" data-fmt="h3">Sub-heading</button>
+          <button type="button" data-fmt="bold">Bold</button>
+          <button type="button" data-fmt="italic">Italic</button>
+          <button type="button" data-fmt="link">Link</button>
+          <button type="button" data-fmt="ul">Bullets</button>
+          <button type="button" data-fmt="ol">Numbers</button>
+          <button type="button" data-fmt="quote">Quote</button>
+          <button type="button" data-fmt="hr">Divider</button>
+        </div>
+        <textarea id="markdown" placeholder="Write here. Select text and use the buttons above — you never need to remember any syntax."></textarea>
+      </div>
+      <div id="previewPane" class="preview prose" style="display:none"></div>
+    </div>
+
+    <div class="field" style="margin-bottom:0">
+      <label style="display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:.95rem;color:var(--ink)">
+        <input type="checkbox" id="draft" style="width:auto" checked />
+        Keep as draft (not visible on the site)
+      </label>
+    </div>
+  </div>
+
+  <div class="sticky-actions">
+    <button class="btn" id="saveBtn">Save</button>
+    <button class="mini" id="viewBtn" style="display:none">View post</button>
+    <span class="admin-msg" id="msg" style="margin:0"></span>
+  </div>
+</div>
+
+<script src="/assets/md.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { editing: null, bannerData: null, banner: '' };
+
+  /* ---------- api ---------- */
+  async function api(payload) {
+    var res = await fetch('/api/cms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    var data = {};
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) throw new Error(data.error || ('Request failed (' + res.status + ')'));
+    return data;
+  }
+
+  function say(el, text, kind) {
+    el.className = 'admin-msg' + (kind ? ' ' + kind : '');
+    el.textContent = text;
+  }
+
+  /* ---------- login ---------- */
+  async function doLogin() {
+    var pw = $('pw').value;
+    if (!pw) { say($('loginMsg'), 'Enter your password.', 'err'); return; }
+    say($('loginMsg'), 'Checking…', 'busy');
+    try {
+      await api({ action: 'login', password: pw });
+      $('pw').value = '';
+      $('loginView').style.display = 'none';
+      $('panelView').style.display = 'block';
+      loadList();
+    } catch (e) { say($('loginMsg'), e.message, 'err'); }
+  }
+  $('loginBtn').addEventListener('click', doLogin);
+  $('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+
+  $('logoutBtn').addEventListener('click', async function () {
+    try { await api({ action: 'logout' }); } catch (e) {}
+    location.reload();
+  });
+
+  /* ---------- post list ---------- */
+  async function loadList() {
+    try {
+      var data = await api({ action: 'list' });
+      var list = $('postList');
+      list.innerHTML = '';
+      if (!data.posts.length) {
+        list.innerHTML = '<li style="color:var(--ink-soft);font-size:.9rem">Nothing yet. Write your first post below.</li>';
+        return;
+      }
+      data.posts.forEach(function (p) {
+        var li = document.createElement('li');
+        var info = document.createElement('div');
+        info.className = 'pi';
+        var b = document.createElement('b');
+        b.textContent = p.title;
+        var s = document.createElement('span');
+        s.textContent = p.date + (p.category ? ' · ' + p.category : '');
+        if (p.draft) {
+          var d = document.createElement('span');
+          d.className = 'draft';
+          d.textContent = ' · DRAFT';
+          s.appendChild(d);
+        }
+        info.appendChild(b); info.appendChild(s);
+
+        var edit = document.createElement('button');
+        edit.className = 'mini'; edit.textContent = 'Edit';
+        edit.onclick = function () { loadPost(p.slug); };
+
+        var del = document.createElement('button');
+        del.className = 'mini danger'; del.textContent = 'Delete';
+        del.onclick = function () { removePost(p.slug, p.title); };
+
+        li.appendChild(info); li.appendChild(edit); li.appendChild(del);
+        list.appendChild(li);
+      });
+    } catch (e) {
+      if (/log in/i.test(e.message)) { location.reload(); return; }
+      $('postList').innerHTML = '<li style="color:#D93A2B;font-size:.9rem"></li>';
+      $('postList').firstChild.textContent = e.message;
+    }
+  }
+
+  async function loadPost(slug) {
+    say($('msg'), 'Loading…', 'busy');
+    try {
+      var d = await api({ action: 'load', slug: slug });
+      state.editing = d.slug;
+      state.bannerData = null;
+      state.banner = d.meta.banner || '';
+      $('panelTitle').textContent = 'Editing post';
+      $('title').value = d.meta.title || '';
+      $('slug').value = d.slug;
+      $('description').value = d.meta.description || '';
+      $('category').value = d.meta.category || '';
+      $('date').value = d.meta.date || '';
+      $('markdown').value = d.body || '';
+      $('draft').checked = !!d.meta.draft;
+      if (state.banner) {
+        $('bannerImg').src = state.banner;
+        $('bannerPreview').style.display = 'block';
+        $('bannerDrop').textContent = 'Click to replace the banner';
+      }
+      $('viewBtn').style.display = d.meta.draft ? 'none' : 'inline-flex';
+      $('viewBtn').onclick = function () { window.open('/blog/' + d.slug, '_blank'); };
+      syncSlug(); countDesc(); renderPreview();
+      say($('msg'), '', '');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) { say($('msg'), e.message, 'err'); }
+  }
+
+  async function removePost(slug, title) {
+    if (!confirm('Delete "' + title + '"?\n\nThe file stays in your GitHub history, so it can be recovered.')) return;
+    say($('msg'), 'Deleting…', 'busy');
+    try {
+      await api({ action: 'delete', slug: slug });
+      say($('msg'), 'Deleted. Site rebuilding.', 'ok');
+      if (state.editing === slug) resetForm();
+      loadList();
+    } catch (e) { say($('msg'), e.message, 'err'); }
+  }
+
+  function resetForm() {
+    state.editing = null; state.bannerData = null; state.banner = '';
+    $('panelTitle').textContent = 'New post';
+    ['title', 'slug', 'description', 'markdown'].forEach(function (id) { $(id).value = ''; });
+    $('category').value = '';
+    $('date').value = new Date().toISOString().slice(0, 10);
+    $('draft').checked = true;
+    $('bannerPreview').style.display = 'none';
+    $('bannerDrop').textContent = 'Click to choose an image · 1200×630 is ideal';
+    $('viewBtn').style.display = 'none';
+    $('slugField').style.display = 'none';
+    syncSlug(); countDesc(); renderPreview();
+    say($('msg'), '', '');
+  }
+  $('newBtn').addEventListener('click', resetForm);
+
+  /* ---------- slug ---------- */
+  function slugify(s) {
+    return String(s || '').toLowerCase().trim()
+      .replace(/['"’]/g, '').replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '').slice(0, 80);
+  }
+  function syncSlug() {
+    var manual = $('slugField').style.display !== 'none';
+    var slug = manual ? slugify($('slug').value) : slugify($('title').value);
+    if (!manual) $('slug').value = slug;
+    $('slugPreview').textContent = '/blog/' + (slug || '…');
+  }
+  $('title').addEventListener('input', syncSlug);
+  $('slug').addEventListener('input', syncSlug);
+  $('editSlug').addEventListener('click', function () {
+    $('slugField').style.display = 'block';
+    $('slug').focus();
+  });
+
+  function countDesc() {
+    $('descCount').textContent = $('description').value.length;
+  }
+  $('description').addEventListener('input', countDesc);
+
+  /* ---------- banner ---------- */
+  $('bannerDrop').addEventListener('click', function () { $('bannerInput').click(); });
+  $('bannerInput').addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      say($('msg'), 'That image is over 4MB. Compress it at squoosh.app first.', 'err');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      state.bannerData = reader.result;
+      $('bannerImg').src = reader.result;
+      $('bannerPreview').style.display = 'block';
+      $('bannerDrop').textContent = 'Click to replace the banner';
+      $('bannerHint').textContent = Math.round(file.size / 1024) + 'KB selected.';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ---------- toolbar ---------- */
+  var ta = $('markdown');
+  function wrap(before, after, placeholder) {
+    var s = ta.selectionStart, e = ta.selectionEnd;
+    var sel = ta.value.slice(s, e) || placeholder;
+    ta.value = ta.value.slice(0, s) + before + sel + after + ta.value.slice(e);
+    ta.focus();
+    ta.selectionStart = s + before.length;
+    ta.selectionEnd = s + before.length + sel.length;
+    renderPreview();
+  }
+  function prefixLines(prefix, numbered) {
+    var s = ta.selectionStart, e = ta.selectionEnd;
+    var startLine = ta.value.lastIndexOf('\n', s - 1) + 1;
+    var endLine = ta.value.indexOf('\n', e);
+    if (endLine === -1) endLine = ta.value.length;
+    var chunk = ta.value.slice(startLine, endLine) || 'List item';
+    var out = chunk.split('\n').map(function (l, i) {
+      return (numbered ? (i + 1) + '. ' : prefix) + l.replace(/^([-*+]\s|\d+[.)]\s|>\s?)/, '');
+    }).join('\n');
+    ta.value = ta.value.slice(0, startLine) + out + ta.value.slice(endLine);
+    ta.focus();
+    ta.selectionStart = startLine; ta.selectionEnd = startLine + out.length;
+    renderPreview();
+  }
+  document.querySelectorAll('.toolbar button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var f = btn.dataset.fmt;
+      if (f === 'bold') wrap('**', '**', 'bold text');
+      else if (f === 'italic') wrap('*', '*', 'italic text');
+      else if (f === 'h2') prefixLines('## ');
+      else if (f === 'h3') prefixLines('### ');
+      else if (f === 'ul') prefixLines('- ');
+      else if (f === 'ol') prefixLines('', true);
+      else if (f === 'quote') prefixLines('> ');
+      else if (f === 'hr') wrap('\n\n---\n\n', '', '');
+      else if (f === 'link') {
+        var url = prompt('Link address (https://…)');
+        if (url) wrap('[', '](' + url + ')', 'link text');
+      }
+    });
+  });
+
+  /* ---------- preview ---------- */
+  function renderPreview() {
+    $('previewPane').innerHTML = window.mdToHtml(ta.value || '');
+  }
+  ta.addEventListener('input', renderPreview);
+  $('tabWrite').addEventListener('click', function () {
+    $('tabWrite').classList.add('on'); $('tabPreview').classList.remove('on');
+    $('writePane').style.display = 'block'; $('previewPane').style.display = 'none';
+  });
+  $('tabPreview').addEventListener('click', function () {
+    $('tabPreview').classList.add('on'); $('tabWrite').classList.remove('on');
+    $('writePane').style.display = 'none'; $('previewPane').style.display = 'block';
+    renderPreview();
+  });
+
+  /* ---------- save ---------- */
+  $('saveBtn').addEventListener('click', async function () {
+    var payload = {
+      action: 'save',
+      title: $('title').value,
+      slug: $('slug').value || $('title').value,
+      originalSlug: state.editing || '',
+      description: $('description').value,
+      category: $('category').value,
+      date: $('date').value,
+      draft: $('draft').checked,
+      markdown: ta.value,
+      banner: state.banner,
+      bannerData: state.bannerData,
+    };
+    $('saveBtn').disabled = true;
+    say($('msg'), 'Saving to GitHub…', 'busy');
+    try {
+      var r = await api(payload);
+      state.editing = r.slug;
+      state.bannerData = null;
+      $('slug').value = r.slug;
+      say($('msg'), r.draft
+        ? 'Draft saved (' + r.commit + '). Not visible on the site.'
+        : 'Published (' + r.commit + '). Live in about a minute.', 'ok');
+      $('viewBtn').style.display = r.draft ? 'none' : 'inline-flex';
+      $('viewBtn').onclick = function () { window.open(r.url, '_blank'); };
+      $('panelTitle').textContent = 'Editing post';
+      loadList();
+    } catch (e) {
+      say($('msg'), e.message, 'err');
+    } finally {
+      $('saveBtn').disabled = false;
+    }
+  });
+
+  /* warn before losing unsaved work */
+  addEventListener('beforeunload', function (e) {
+    if ($('panelView').style.display !== 'none' && ($('title').value || ta.value)) {
+      e.preventDefault(); e.returnValue = '';
+    }
+  });
+
+  resetForm();
+})();
+</script>
+</body>
+</html>
