@@ -1,10 +1,10 @@
 ---
 title: "test"
 description: "test"
-banner: "/uploads/test-msd0qo1p.jpg"
+banner: "/uploads/test-msd0rasd.webp"
 date: "2026-08-03"
 category: "CRO"
-draft: true
+draft: false
 ---
 
 test
