@@ -4,8 +4,8 @@
 --ink-soft:#4A4D66; /* muted body text */
 --paper:#F6F7FB; /* cool light background */
 --card:#FFFFFF;
---signal:#4A74A7; /* signal blue — action & emphasis */
---growth:#C6F24E; /* lime — metrics & wins */
+--signal:#4A74A7; /* signal blue â€” action & emphasis */
+--growth:#C6F24E; /* lime â€” metrics & wins */
 --line:#E3E5EF;
 --display:"Bricolage Grotesque", sans-serif;
 --body:"Instrument Sans", sans-serif;
@@ -41,7 +41,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .nav-links{display:flex;gap:32px;align-items:center;list-style:none}
 .nav-links a{font-size:.92rem;font-weight:500;color:var(--ink-soft);transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
-/* the .nav-links a rule above out-specifies .btn, which was making the pill's white label render dark-on-dark — pin it back to white */
+/* the .nav-links a rule above out-specifies .btn, which was making the pill's white label render dark-on-dark â€” pin it back to white */
 .nav-links a.btn,.nav-links a.btn:hover{color:#fff}
 .btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;font-weight:600;font-size:.92rem;padding:13px 26px;border-radius:99px;border:none;cursor:pointer;transition:transform .2s,background .2s}
 .btn:hover{background:var(--signal);transform:translateY(-2px)}
@@ -125,7 +125,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .skills span:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* ============ INSIGHTS ============ */
-.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:80px}
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .post{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .25s,box-shadow .25s}
 .post:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(22,24,43,.10)}
 .post .thumb{height:150px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2rem;color:rgba(22,24,43,.25)}
@@ -283,3 +283,19 @@ html{scroll-behavior:auto}
 .mini.danger:hover{border-color:#D93A2B;color:#D93A2B}
 .sticky-actions{position:sticky;bottom:0;background:linear-gradient(to top,var(--paper) 70%,transparent);padding:18px 0 8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 @media(max-width:640px){.row{grid-template-columns:1fr}.admin-wrap{padding:24px 16px 70px}}
+
+/* ============ BLOG CATEGORY FILTER ============ */
+.cat-filter{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.chip{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:10px 15px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .18s,border-color .18s,background .18s,color .18s}
+.chip:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-2px)}
+.chip .n{font-size:.68rem;background:var(--paper);border-radius:99px;padding:2px 7px;line-height:1.5;transition:background .18s,color .18s}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;transform:none}
+.chip[aria-pressed="true"] .n{background:var(--growth);color:var(--ink)}
+.cat-status{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft);margin:0 0 26px}
+.post.hidden{display:none}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.post.pop{animation:cardIn .4s cubic-bezier(.2,.7,.3,1) both}
+@media(max-width:640px){
+.cat-filter{gap:8px}
+.chip{padding:9px 13px;font-size:.7rem}
+}
