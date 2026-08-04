@@ -134,8 +134,7 @@
       shown++;
     });
 
-    status.textContent = shown + (shown === 1 ? ' note' : ' notes') +
-      (key === 'all' ? '' : ' in ' + label);
+    status.textContent = '';
 
     if (interactive && history.replaceState) {
       history.replaceState(null, '', key === 'all' ? location.pathname : location.pathname + '#' + key);
