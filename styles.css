@@ -125,7 +125,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .skills span:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* ============ INSIGHTS ============ */
-.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:80px}
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .post{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .25s,box-shadow .25s}
 .post:hover{transform:translateY(-6px);box-shadow:0 20px 44px rgba(22,24,43,.10)}
 .post .thumb{height:150px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2rem;color:rgba(22,24,43,.25)}
