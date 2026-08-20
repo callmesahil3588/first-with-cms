@@ -17,6 +17,445 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-PW8ZBZ3W');</script>
 <!-- End Google Tag Manager -->
+  PATCH — Google search popup for hero
+
+You only change index.html. Nothing else (styles.css, api/cms.js, data/, vercel.json) changes.
+
+There are exactly 3 edits. Everything else in your index.html stays as-is.
+
+========================================================================
+
+EDIT 1 of 3  —  ADD this <style> block inside <head>
+WHERE: paste it just before the closing </head> tag
+       (right after your <link rel="stylesheet" href="/styles.css" /> line is perfect)
+DO NOT remove anything; this is an addition.
+
+------------------------------------------------------------------------
+<!-- =========================================================================
+     Google search screen (tilted, fading into a lavender haze) + AI Overview.
+     Replaces the old .dash-card. Sits inside .hero-visual = right column.
+     Scoped .gsp-* classes; nothing here touches your CMS.
+     ========================================================================= -->
+<style>
+.gsp{position:relative;display:flex;justify-content:center;align-items:center;padding:22px 6px;
+  background:
+    radial-gradient(58% 40% at 26% 20%, rgba(148,156,232,.30), transparent 62%),
+    radial-gradient(54% 44% at 84% 40%, rgba(158,150,228,.22), transparent 62%),
+    radial-gradient(72% 62% at 50% 80%, rgba(176,184,240,.20), transparent 74%),
+    radial-gradient(92% 82% at 50% 46%, rgba(226,229,249,.92), rgba(226,229,249,0) 82%);
+  opacity:0;transform:translateY(18px);animation:gsp-in .8s cubic-bezier(.22,1,.36,1) .12s forwards,gsp-float 7.5s ease-in-out 1.1s infinite;}
+.gsp *{box-sizing:border-box;}
+@keyframes gsp-in{to{opacity:1;transform:translateY(0);}}
+@keyframes gsp-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+/* the tilted search screen — no status bar / no island. Bottom fades into the haze. */
+.gsp-phone{position:relative;z-index:1;width:min(300px,100%);aspect-ratio:15 / 25;flex:none;display:flex;flex-direction:column;overflow:hidden;
+  background:#fff;border:1px solid rgba(210,216,240,.85);border-radius:34px;
+  --rx:9deg;--ry:-13deg;--rz:2.5deg;
+  transform:perspective(1300px) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz));
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+  -webkit-mask-image:linear-gradient(to bottom, #000 66%, transparent 97%);
+          mask-image:linear-gradient(to bottom, #000 66%, transparent 97%);}
+
+.gsp-screen{flex:1;min-height:0;display:flex;flex-direction:column;padding:18px 16px 10px;overflow:hidden;}
+
+.gsp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex:none;}
+.gsp-hamburger{color:#5f6368;display:flex;}
+.gsp-hamburger svg{width:19px;height:19px;}
+.gsp-logo{display:inline-flex;align-items:center;line-height:1;}
+.gsp-logo-img{height:22px;width:auto;display:block;}
+.gsp-logo-fallback{display:none;font-weight:700;font-size:24px;letter-spacing:-.5px;}
+.gsp-logo.fallback .gsp-logo-img{display:none;}
+.gsp-logo.fallback .gsp-logo-fallback{display:inline;}
+.gsp-avatar{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#8ab4f8,#6b5cf0 55%,#7a3fd8);box-shadow:0 1px 4px rgba(90,70,220,.35),inset 0 0 0 2px #fff;}
+
+.gsp-searchbar{display:flex;align-items:center;gap:10px;border:1px solid #e6e8ec;border-radius:999px;padding:10px 14px;background:#fff;box-shadow:0 1px 6px rgba(32,33,36,.08);margin-bottom:14px;flex:none;}
+.gsp-ico{width:18px;height:18px;flex:none;}
+.gsp-search-ico{color:#9aa0a6;}
+.gsp-mic{color:#4285F4;}
+.gsp-lens{color:#4285F4;}
+.gsp-query{flex:1;min-width:0;display:flex;align-items:center;font-size:13.5px;color:#3c4043;min-height:18px;white-space:nowrap;overflow:hidden;}
+#gspText{overflow:hidden;}
+.gsp-caret{display:inline-block;width:2px;height:16px;margin-left:1px;background:#4285F4;border-radius:2px;flex:none;animation:gsp-blink 1.1s steps(1,end) infinite;}
+.gsp-caret.typing{animation:none;opacity:1;}
+@keyframes gsp-blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+
+.gsp-tabs{display:flex;gap:18px;align-items:center;font-size:12.5px;color:#5f6368;border-bottom:1px solid #ececf1;margin-bottom:14px;white-space:nowrap;overflow:hidden;flex:none;}
+.gsp-tab{padding-bottom:10px;position:relative;}
+.gsp-tab.active{color:#1a73e8;font-weight:600;}
+.gsp-tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:#1a73e8;}
+
+.gsp-results{position:relative;flex:1;min-height:0;overflow:hidden;}
+.gsp-phase{height:100%;animation:gsp-fadein .42s ease both;}
+.gsp-phase[hidden]{display:none;}
+@keyframes gsp-fadein{from{opacity:0;}to{opacity:1;}}
+
+.gsp-status-phase{display:flex;align-items:center;gap:9px;color:#5f6368;font-size:13px;padding-top:6px;}
+.gsp-spark{color:#1a73e8;font-size:15px;display:inline-block;animation:gsp-pulse 1s ease-in-out infinite;}
+@keyframes gsp-pulse{0%,100%{transform:scale(1);opacity:.65;}50%{transform:scale(1.28);opacity:1;}}
+
+.gsp-skeleton{display:flex;flex-direction:column;gap:13px;padding-top:4px;}
+.gsp-sk-line{height:13px;border-radius:7px;background:linear-gradient(90deg,#eef0f4 25%,#e2e5ec 37%,#eef0f4 63%);background-size:400% 100%;animation:gsp-shimmer 1.4s ease-in-out infinite;flex:none;}
+.gsp-sk-line.w1{width:88%;}.gsp-sk-line.w2{width:64%;}.gsp-sk-line.w3{width:76%;}.gsp-sk-line.w4{width:54%;}
+@keyframes gsp-shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
+
+.gsp-final{display:flex;flex-direction:column;gap:13px;height:100%;}
+
+/* Google AI Overview — the AI answer, featuring the brand (AEO signal) */
+.gsp-ai{position:relative;flex:none;border-radius:16px;padding:12px 14px;
+  background:linear-gradient(180deg, rgba(232,240,255,.78), rgba(240,236,255,.78));
+  border:1px solid rgba(120,140,240,.22);
+  animation:gsp-pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+.gsp-ai-head{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.gsp-ai-spark{width:16px;height:16px;flex:none;}
+.gsp-ai-label{font-size:12.5px;font-weight:700;letter-spacing:.1px;background:linear-gradient(90deg,#4285F4,#9b59d0,#e0568a);-webkit-background-clip:text;background-clip:text;color:#6a5cd6;-webkit-text-fill-color:transparent;}
+.gsp-ai-text{font-size:12px;line-height:1.5;color:#3c4043;}
+.gsp-ai-text b{color:#1a3fb8;font-weight:700;}
+
+.gsp-featured{position:relative;flex:none;background:rgba(255,255,255,.9);border:1px solid rgba(120,160,255,.34);border-radius:18px;padding:13px 14px;box-shadow:0 8px 26px rgba(20,30,60,.07),0 0 0 1px rgba(66,133,244,.08),0 0 20px rgba(66,133,244,.10);animation:gsp-pop .55s cubic-bezier(.34,1.56,.64,1) .08s both,gsp-breathe 4s ease-in-out .6s infinite;}
+@keyframes gsp-pop{0%{opacity:0;transform:scale(.92) translateY(10px);}100%{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes gsp-breathe{0%,100%{box-shadow:0 8px 26px rgba(20,30,60,.07),0 0 0 1px rgba(66,133,244,.10),0 0 18px rgba(66,133,244,.10);}50%{box-shadow:0 12px 36px rgba(20,30,60,.10),0 0 0 1px rgba(66,133,244,.26),0 0 40px rgba(66,133,244,.26);}}
+.gsp-fr-head{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.gsp-fav{width:22px;height:22px;border-radius:50%;flex:none;background:radial-gradient(circle at 30% 28%,#7aa8ff,#5b7cf6 60%,#3f5bd8);box-shadow:0 1px 3px rgba(63,91,216,.4);}
+.gsp-fr-url{font-size:11.5px;color:#5f6368;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gsp-fr-crumb{color:#9aa0a6;}
+.gsp-fr-badge{margin-left:auto;flex:none;font-size:9.5px;font-weight:600;letter-spacing:.3px;color:#1a73e8;background:rgba(26,115,232,.10);padding:3px 8px;border-radius:999px;}
+.gsp-fr-title{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:16px;line-height:1.2;font-weight:700;color:#1a3fb8;margin-bottom:4px;}
+.gsp-fr-desc{font-size:12px;line-height:1.45;color:#4a4d52;}
+.gsp-more{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;opacity:.45;padding:0 2px;}
+
+@media (max-width:520px){
+  .gsp-phone{--rx:2deg;--ry:0deg;--rz:0deg;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .gsp,.gsp-phone,.gsp-featured,.gsp-ai,.gsp-caret,.gsp-spark,.gsp-sk-line{animation:none !important;}
+  .gsp{opacity:1 !important;transform:none !important;}
+  .gsp-phone{transform:perspective(1300px) rotateX(9deg) rotateY(-13deg) rotateZ(2.5deg) !important;}
+  .gsp-caret{display:none;}
+}
+</style>
+------------------------------------------------------------------------
+
+EDIT 2 of 3  —  REPLACE the hero right-column card
+WHERE: in the HERO, find this block and DELETE it:
+
+      <div class="hero-visual">
+      <div class="dash-card">
+      <h4>Last quarter · client snapshot</h4>
+      ... the four dash-row lines ...
+      </div>
+      </div>
+
+Then PASTE the block below in its place.
+(Keep it inside the hero-grid, as the 2nd column — that is what puts it on the RIGHT.)
+
+------------------------------------------------------------------------
+<!-- RIGHT COLUMN — tilted Google search screen + AI Overview. Keep it inside .hero-visual. -->
+<div class="hero-visual">
+<div class="gsp" id="gsp" aria-hidden="true">
+<div class="gsp-phone" id="gspBrowser">
+<div class="gsp-screen">
+
+<div class="gsp-top">
+<span class="gsp-hamburger">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+</span>
+<span class="gsp-logo" id="gspLogo"><img class="gsp-logo-img" id="gspLogoImg" alt="Google" referrerpolicy="no-referrer" decoding="async" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" /><span class="gsp-logo-fallback"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></span></span>
+<span class="gsp-avatar"></span>
+</div>
+
+<div class="gsp-searchbar">
+<svg class="gsp-ico gsp-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<span class="gsp-query"><span id="gspText"></span><span class="gsp-caret" id="gspCaret"></span></span>
+<svg class="gsp-ico gsp-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+<svg class="gsp-ico gsp-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
+</div>
+
+<div class="gsp-tabs">
+<span class="gsp-tab active">All</span>
+<span class="gsp-tab">Images</span>
+<span class="gsp-tab">News</span>
+<span class="gsp-tab">Videos</span>
+<span class="gsp-tab">Shopping</span>
+<span class="gsp-tab">Personal</span>
+</div>
+
+<div class="gsp-results">
+<div class="gsp-phase gsp-status-phase" id="gspStatusPhase" hidden>
+<span class="gsp-spark">✦</span><span id="gspStatusText">Searching…</span>
+</div>
+
+<div class="gsp-phase gsp-skeleton" id="gspSkeleton" hidden>
+<div class="gsp-sk-line w1"></div>
+<div class="gsp-sk-line w2"></div>
+<div class="gsp-sk-line w3"></div>
+<div class="gsp-sk-line w4"></div>
+<div class="gsp-sk-line w1"></div>
+<div class="gsp-sk-line w3"></div>
+</div>
+
+<div class="gsp-phase gsp-final" id="gspFinal" hidden>
+<div class="gsp-ai">
+<div class="gsp-ai-head">
+<svg class="gsp-ai-spark" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gspGem" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4285F4"/><stop offset=".5" stop-color="#9b59d0"/><stop offset="1" stop-color="#e0568a"/></linearGradient></defs><path fill="url(#gspGem)" d="M12 2c.5 5 5 9.5 10 10-5 .5-9.5 5-10 10-.5-5-5-9.5-10-10 5-.5 9.5-5 10-10Z"/></svg>
+<span class="gsp-ai-label">AI Overview</span>
+</div>
+<div class="gsp-ai-text" id="gspAiText">Across top sources, <b>Your Brand</b> stands out as a leading choice — cited for trust, speed and global coverage.</div>
+</div>
+
+<div class="gsp-featured" id="gspFeatured">
+<div class="gsp-fr-head">
+<span class="gsp-fav"></span>
+<span class="gsp-fr-url">yourbrand.com<span class="gsp-fr-crumb"> › solutions</span></span>
+<span class="gsp-fr-badge">Featured result</span>
+</div>
+<div class="gsp-fr-title">🚀 Your Brand Here</div>
+<div class="gsp-fr-desc" id="gspFrDesc">Rank where your customers are already searching.</div>
+</div>
+
+<div class="gsp-more">
+<div class="gsp-sk-line w2"></div>
+<div class="gsp-sk-line w3"></div>
+<div class="gsp-sk-line w1"></div>
+<div class="gsp-sk-line w2"></div>
+<div class="gsp-sk-line w3"></div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<!-- /RIGHT COLUMN -->
+------------------------------------------------------------------------
+
+EDIT 3 of 3  —  ADD this <script> block
+WHERE: at the very end, just before </body>.
+       Put it AFTER your existing <script> block (the rotator/ticker/counters one).
+       Do NOT delete your existing script — this is an additional one.
+
+------------------------------------------------------------------------
+<script>
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Hero word rotator */
+const words = ['performance ads', 'SEO that ranks', 'content that converts', 'data, not guesses'];
+const rot = document.getElementById('rotator');
+if (rot && !reduceMotion) {
+  let wi = 0;
+  const typeWord = (word, cb) => {
+    let i = 0; rot.textContent = '';
+    const t = setInterval(() => {
+      rot.textContent = word.slice(0, ++i);
+      if (i >= word.length) { clearInterval(t); setTimeout(cb, 2200); }
+    }, 55);
+  };
+  const eraseWord = (cb) => {
+    const t = setInterval(() => {
+      rot.textContent = rot.textContent.slice(0, -1);
+      if (!rot.textContent) { clearInterval(t); cb(); }
+    }, 28);
+  };
+  const cycle = () => typeWord(words[wi], () => eraseWord(() => { wi = (wi + 1) % words.length; cycle(); }));
+  cycle();
+}
+
+/* Seamless ticker */
+const track = document.getElementById('tickerTrack');
+if (track) track.innerHTML += track.innerHTML;
+
+/* Animated counters */
+function animateCount(el) {
+  const end = parseFloat(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  const prefix = el.dataset.prefix || '';
+  const decimals = (String(el.dataset.count).split('.')[1] || '').length;
+  if (reduceMotion) { el.textContent = prefix + end + suffix; return; }
+  const dur = 1400, start = performance.now();
+  const frame = (now) => {
+    const p = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = prefix + (end * eased).toFixed(decimals) + suffix;
+    if (p < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+const countObserver = new IntersectionObserver((entries) => entries.forEach((e) => {
+  if (e.isIntersecting) { animateCount(e.target); countObserver.unobserve(e.target); }
+}), { threshold: 0.6 });
+document.querySelectorAll('[data-count]').forEach((el) => countObserver.observe(el));
+
+/* Contact form */
+const form = document.getElementById('contactForm');
+if (form) {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('emailInput');
+    const msg = document.getElementById('formMsg');
+    if (!email.value || !email.value.includes('@')) {
+      msg.textContent = 'Enter a valid email to continue.';
+      msg.style.color = '#FF6B6B';
+      return;
+    }
+    msg.style.color = '';
+    msg.textContent = "Thanks \u2014 I'll reply within 24 hours.";
+    email.value = '';
+  });
+}
+</script>
+
+<!-- Google search animation (typing -> AI Overview + featured result) + 3D pointer tilt -->
+<script>
+(function(){
+  const root=document.getElementById('gsp');
+  if(!root) return;
+  const textEl=document.getElementById('gspText');
+  const caret=document.getElementById('gspCaret');
+  const statusP=document.getElementById('gspStatusPhase');
+  const statusText=document.getElementById('gspStatusText');
+  const skeleton=document.getElementById('gspSkeleton');
+  const finalP=document.getElementById('gspFinal');
+  const descEl=document.getElementById('gspFrDesc');
+  const aiText=document.getElementById('gspAiText');
+
+  // Live Google logo — pulls Google's current homepage wordmark; falls back to
+  // the built-in coloured letters if it can't load (offline / blocked / path changed).
+  (function(){
+    var lw=document.getElementById('gspLogo'), li=document.getElementById('gspLogoImg');
+    if(!lw||!li) return;
+    var fail=function(){ lw.classList.add('fallback'); };
+    li.addEventListener('error', fail);
+    if(li.complete && li.naturalWidth===0) fail();
+  })();
+
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- interactive 3D tilt: the screen leans toward the cursor (hover-capable devices) ----
+  const tilt=document.getElementById('gspBrowser');
+  const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if(tilt&&finePointer&&!reduce){
+    const REST_RX=9,REST_RY=-13;
+    let raf=0,rx=REST_RX,ry=REST_RY;
+    const apply=function(){raf=0;tilt.style.setProperty('--rx',rx.toFixed(2)+'deg');tilt.style.setProperty('--ry',ry.toFixed(2)+'deg');};
+    root.addEventListener('pointermove',function(e){
+      const r=root.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-0.5;
+      const py=(e.clientY-r.top)/r.height-0.5;
+      ry=REST_RY+px*11; rx=REST_RX-py*9;
+      if(!raf) raf=requestAnimationFrame(apply);
+    });
+    root.addEventListener('pointerleave',function(){ rx=REST_RX; ry=REST_RY; if(!raf) raf=requestAnimationFrame(apply); });
+  }
+
+  const queries=[
+    'best payment company','best crypto SaaS provider','best fintech platform',
+    'best global payment gateway','best payment API','best cross-border payments',
+    'best international payouts','best stablecoin payment solution','best B2B payment software',
+    'best fintech startup','best Web3 infrastructure','best SaaS company',
+    'best payment processor','best checkout platform','best digital payments company'
+  ];
+  const descs=[
+    'Rank where your customers are already searching.',
+    'The brand everyone discovers first.',
+    'Become the answer to your customers\u2019 next search.'
+  ];
+  const aiAnswers=[
+    'Across top sources, <b>Your Brand</b> stands out as a leading choice \u2014 cited for trust, speed and global coverage.',
+    'Based on expert reviews, <b>Your Brand</b> is frequently recommended as a top option in this category.',
+    'Summaries from around the web rank <b>Your Brand</b> among the best \u2014 noted for reliability and reach.'
+  ];
+  const statuses=['Searching\u2026','Generating AI overview\u2026','Finding the best results\u2026'];
+
+  const sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
+  const rnd=function(a,b){return a+Math.random()*(b-a);};
+  const pick=function(arr){return arr[Math.floor(Math.random()*arr.length)];};
+
+  let lastIdx=-1;
+  function nextQuery(){
+    let i;
+    do{ i=Math.floor(Math.random()*queries.length); }while(i===lastIdx&&queries.length>1);
+    lastIdx=i; return queries[i];
+  }
+
+  async function typeQuery(str){
+    caret.classList.add('typing');
+    textEl.textContent='';
+    let typo=false;
+    for(let i=0;i<str.length;i++){
+      textEl.textContent+=str[i];
+      if(!typo&&!reduce&&i>3&&i<str.length-2&&Math.random()<0.15){
+        typo=true;
+        await sleep(rnd(70,120));
+        textEl.textContent+='abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random()*26)];
+        await sleep(rnd(170,320));
+        textEl.textContent=textEl.textContent.slice(0,-1);
+        await sleep(rnd(90,170));
+      }
+      let d=rnd(45,110);
+      if(str[i]===' ') d+=rnd(60,150);
+      if(Math.random()<0.08) d+=rnd(180,360);
+      await sleep(reduce?0:d);
+    }
+    caret.classList.remove('typing');
+  }
+
+  const showP=function(el){ el.hidden=false; };
+  const hideP=function(el){ el.hidden=true; };
+
+  async function cycle(){
+    hideP(statusP); hideP(skeleton); hideP(finalP);
+    textEl.textContent='';
+    await sleep(reduce?0:520);
+
+    await typeQuery(nextQuery());
+    await sleep(reduce?0:rnd(240,480));
+
+    statusText.textContent=pick(statuses);
+    showP(statusP);
+    await sleep(reduce?300:rnd(760,1080));
+    hideP(statusP);
+
+    showP(skeleton);
+    await sleep(reduce?300:rnd(620,900));
+    hideP(skeleton);
+
+    aiText.innerHTML=pick(aiAnswers);
+    descEl.textContent=pick(descs);
+    showP(finalP);
+    await sleep(reduce?1800:rnd(2900,3500));
+    hideP(finalP);
+    await sleep(reduce?0:280);
+  }
+
+  let inView=true;
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(e){ inView=e.isIntersecting; }); },{threshold:0.12}).observe(root);
+  }
+  const canRun=function(){ return inView && !document.hidden; };
+
+  async function loop(){
+    while(true){
+      if(!canRun()){ await sleep(400); continue; }
+      await cycle();
+    }
+  }
+
+  if(reduce){
+    textEl.textContent=queries[0];
+    if(caret) caret.style.display='none';
+    aiText.innerHTML=aiAnswers[0];
+    descEl.textContent=descs[0];
+    hideP(statusP); hideP(skeleton); showP(finalP);
+  }else{
+    loop();
+  }
+})();
+</script>
+------------------------------------------------------------------------
+
+That's everything. Save index.html, commit, push. Your CMS is untouched.
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -58,7 +497,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         class="hero-photo">
 </div>
   -->
-
+<!--
 <div class="hero-visual">
 <div class="dash-card">
 <h4>Last quarter · client snapshot</h4>
@@ -69,6 +508,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 </div>
+  -->
 </header>
 
 <!-- TICKER -->
