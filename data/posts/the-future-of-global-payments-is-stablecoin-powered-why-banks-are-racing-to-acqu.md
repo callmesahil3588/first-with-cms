@@ -113,7 +113,8 @@ The takeaway for banks, fintechs, and enterprises is the same: stablecoin paymen
 
 ### Frequently asked questions
 
-Why did Mastercard acquire BVNK? To connect its global card network directly to blockchain-based settlement. The up-to-$1.8 billion deal (completed August 3, 2026) gives Mastercard on-chain, stablecoin-native infrastructure for 24/7 settlement, cross-border B2B payments, payouts, and treasury flows across 130+ countries.
+**Why did Mastercard acquire BVNK?** 
+To connect its global card network directly to blockchain-based settlement. The up-to-$1.8 billion deal (completed August 3, 2026) gives Mastercard on-chain, stablecoin-native infrastructure for 24/7 settlement, cross-border B2B payments, payouts, and treasury flows across 130+ countries.
 
 **Are stablecoins better than SWIFT for cross-border payments?** 
 For speed and cost, yes — stablecoin transfers settle in minutes at ~0.1–0.5% versus SWIFT's 3–5 days at 2–7%, a 100x–1,000x cost advantage on many corridors. But SWIFT still wins where offramps are thin or local rules restrict crypto, so most treasury teams run both in a multi-rail setup.
