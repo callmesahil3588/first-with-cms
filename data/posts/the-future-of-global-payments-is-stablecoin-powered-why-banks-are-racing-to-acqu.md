@@ -7,7 +7,7 @@ category: "Insights"
 draft: false
 ---
 
-****Quick answer****: Stablecoins have graduated from a crypto trading tool into a serious global payments rail — and the biggest names in finance are now paying billions to own the infrastructure behind them. In August 2026, Mastercard completed its acquisition of stablecoin firm BVNK for up to $1.8 billion. The logic is simple: stablecoin cross-border payments settle in minutes for a fraction of a percent, while a traditional SWIFT wire still takes days and costs 2–7%. This is the story of why the race for stablecoin payment infrastructure is on, backed by the latest data, and where payment rails go from here.
+**Quick answer**: Stablecoins have graduated from a crypto trading tool into a serious global payments rail — and the biggest names in finance are now paying billions to own the infrastructure behind them. In August 2026, Mastercard completed its acquisition of stablecoin firm BVNK for up to $1.8 billion. The logic is simple: stablecoin cross-border payments settle in minutes for a fraction of a percent, while a traditional SWIFT wire still takes days and costs 2–7%. This is the story of why the race for stablecoin payment infrastructure is on, backed by the latest data, and where payment rails go from here.
 
 
 ### Key takeaways
