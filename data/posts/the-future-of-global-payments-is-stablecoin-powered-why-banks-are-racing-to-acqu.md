@@ -113,20 +113,20 @@ The takeaway for banks, fintechs, and enterprises is the same: stablecoin paymen
 
 ### Frequently asked questions
 
-**Why did Mastercard acquire BVNK?** 
+**Why did Mastercard acquire BVNK?**<br> 
 To connect its global card network directly to blockchain-based settlement. The up-to-$1.8 billion deal (completed August 3, 2026) gives Mastercard on-chain, stablecoin-native infrastructure for 24/7 settlement, cross-border B2B payments, payouts, and treasury flows across 130+ countries.
 
-**Are stablecoins better than SWIFT for cross-border payments?** 
+**Are stablecoins better than SWIFT for cross-border payments?**<br> 
 For speed and cost, yes — stablecoin transfers settle in minutes at ~0.1–0.5% versus SWIFT's 3–5 days at 2–7%, a 100x–1,000x cost advantage on many corridors. But SWIFT still wins where offramps are thin or local rules restrict crypto, so most treasury teams run both in a multi-rail setup.
 
-**How big is the stablecoin market in 2026?** 
+**How big is the stablecoin market in 2026?**<br> 
 About $308 billion in total supply as of mid-August 2026 (DefiLlama), up ~14% year over year, with USD-pegged tokens making up roughly 99.5% of supply and USDT plus USDC accounting for ~83% of the market.
 
-**What's the difference between tokenized deposits and stablecoins? **
+**What's the difference between tokenized deposits and stablecoins? **<br>
 A stablecoin circulates publicly across institutions and stays off the issuing bank's balance sheet. A tokenized deposit is a claim on a specific bank account that moves only within that bank's network and stays on its balance sheet — which is why banks favor it.
 
-**How are banks adopting stablecoins? **
+**How are banks adopting stablecoins? **<br>
 Through bank-issued stablecoins (e.g., SoFi's sofiUSD), tokenized-deposit programs (JPMorgan's Kinexys/JPMD, Citi Token Services), and a shared tokenized-deposit network from JPMorgan, Citi, Bank of America, and Wells Fargo targeted for 2027.
 
-**What is the GENIUS Act? **
+**What is the GENIUS Act? **<br>
 US legislation signed on July 18, 2025 that created the first comprehensive federal framework for payment stablecoins, giving banks and issuers a regulated path — the catalyst behind 2026's wave of stablecoin acquisitions.
