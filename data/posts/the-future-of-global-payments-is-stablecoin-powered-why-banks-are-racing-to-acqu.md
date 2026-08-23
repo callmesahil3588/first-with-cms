@@ -129,12 +129,4 @@ A stablecoin circulates publicly across institutions and stays off the issuing b
 Through bank-issued stablecoins (e.g., SoFi's sofiUSD), tokenized-deposit programs (JPMorgan's Kinexys/JPMD, Citi Token Services), and a shared tokenized-deposit network from JPMorgan, Citi, Bank of America, and Wells Fargo targeted for 2027.
 
 **What is the GENIUS Act? **
-US legislation signed on July 18, 2025 that created the first comprehensive federal framework for payment stablecoins, giving banks and 
-
----
-
-
-
----
-
-issuers a regulated path — the catalyst behind 2026's wave of stablecoin acquisitions.
+US legislation signed on July 18, 2025 that created the first comprehensive federal framework for payment stablecoins, giving banks and issuers a regulated path — the catalyst behind 2026's wave of stablecoin acquisitions.
