@@ -166,7 +166,7 @@ if (/^\*\*[^*]+\?\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1
   out.push('<p>' + inline(question) + '<br>' + inline(answer.join(' ')) + '</p>');
   continue;
 }
-}
+
 
 // paragraph (join following non-special lines)
 closeList(listStack);
