@@ -144,10 +144,10 @@ function mdToHtml(src) {
     // blank line
     if (!line.trim()) { closeList(listStack); i++; continue; }
 
-  // FAQ question + answer
-// Any standalone bold line is treated as an FAQ question.
-// The following text is placed after a single line break.
-if (/^\*\*.+\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1].trim()) {
+ // FAQ question + answer
+// A standalone bold question followed by an answer becomes:
+// <strong>Question?</strong><br>Answer
+if (/^\*\*[^*]+\?\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1].trim()) {
   closeList(listStack);
 
   var question = line.trim();
@@ -157,8 +157,7 @@ if (/^\*\*.+\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1].tri
   while (
     i < lines.length &&
     lines[i].trim() &&
-    !/^(#{2,4}\s|```|&gt;\s?|[-*+]\s|\d+[.)]\s|\||(-{3,}|\*{3,})\s*$)/.test(lines[i]) &&
-    !/^\*\*.+\*\*$/.test(lines[i].trim())
+    !/^(#{2,4}\s|```|&gt;\s?|[-*+]\s|\d+[.)]\s|\||(-{3,}|\*{3,})\s*$)/.test(lines[i])
   ) {
     answer.push(lines[i]);
     i++;
@@ -166,6 +165,7 @@ if (/^\*\*.+\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1].tri
 
   out.push('<p>' + inline(question) + '<br>' + inline(answer.join(' ')) + '</p>');
   continue;
+}
 }
 }
 
