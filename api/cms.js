@@ -421,7 +421,6 @@ ${meta.category ? `<span class="cat">${attr(meta.category)}</span>` : ''}
 <span>${attr(prettyDate(meta.date))}</span>
 </div>
 <h1>${attr(meta.title)}</h1>
-<p class="lede">${attr(meta.description)}</p>
 <div class="article-banner"><img src="${attr(meta.banner)}" alt="${attr(meta.title)}" /></div>
 <div class="prose">
 ${bodyHtml}
