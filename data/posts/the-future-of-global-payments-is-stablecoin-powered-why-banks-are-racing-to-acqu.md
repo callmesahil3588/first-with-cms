@@ -37,30 +37,16 @@ Crucially, most businesses never touch crypto directly. The dominant pattern is 
 Stablecoins vs SWIFT: the cost and speed gap
 This is the comparison driving every boardroom conversation. SWIFT, launched in 1973, is a messaging network linking more than 11,000 financial institutions and handling roughly 45 million payment messages a day — but it routes instructions between correspondent banks rather than moving the value itself.
 
-Factor
-SWIFT / correspondent banking
-Stablecoin rail
-Settlement time
-3–5 business days
-Under 3 minutes, 24/7/365
-All-in cost
-2–7% (fees + FX spread)
-~0.1–0.5%
-Per-transfer fee (benchmark)
-$25–$50 (BIS)
-$0.01–$1.00 (US Federal Reserve)
-Availability
-Banking hours
-Always on, weekends included
-Intermediaries
-2–5 correspondent banks
-Peer-to-peer
-Transparency
-Opaque; hidden FX markups
-On-chain, auditable
-Programmability
-None
-Smart-contract native
+| Factor | SWIFT / correspondent banking | Stablecoin rail |
+| --- | --- | --- |
+| Settlement time | 3–5 business days | Under 3 minutes, 24/7/365 |
+| All-in cost | 2–7% (fees + FX spread) | ~0.1–0.5% |
+| Per-transfer fee (benchmark) | $25–$50 (BIS) | $0.01–$1.00 (US Federal Reserve) |
+| Availability | Banking hours | Always on, weekends included |
+| Intermediaries | 2–5 correspondent banks | Peer-to-peer |
+| Transparency | Opaque; hidden FX markups | On-chain, auditable |
+| Programmability | None | Smart-contract native |
+
 The headline: on most cross-border flows, the cost ratio runs 100x to 1,000x in favor of stablecoins, per Federal Reserve and BIS benchmarks. The gap is widest in emerging markets, where correspondent banking is most broken. Corridors into India, Nigeria, Brazil, Argentina, the Philippines, Turkey, and Pakistan consistently show 50–70% cost savings versus traditional rails, and Sub-Saharan African remittances still average over 6% in fees, according to the World Bank.
 
 One honest caveat keeps this credible: stablecoins are not a universal SWIFT replacement. SWIFT still wins where local regulation limits crypto, where offramps are thin, or where very large flows need established correspondent relationships. The realistic 2026 picture is coexistence — a multi-rail model where treasury teams route each corridor to whichever rail is cheaper and faster.
