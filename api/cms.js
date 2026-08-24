@@ -167,7 +167,6 @@ if (/^\*\*[^*]+\?\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1
   continue;
 }
 }
-}
 
 // paragraph (join following non-special lines)
 closeList(listStack);
