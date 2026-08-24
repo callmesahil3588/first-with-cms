@@ -450,7 +450,6 @@ function card(p) {
 <div class="body">
 ${p.category ? `<span class="cat">${attr(p.category)}</span>` : ''}
 <h3><a href="/blog/${attr(p.slug)}">${attr(p.title)}</a></h3>
-<p>${attr(p.description)}</p>
 <a class="read" href="/blog/${attr(p.slug)}">Read the note &rarr;</a>
 <span class="date">${attr(prettyDate(p.date))}</span>
 </div>
