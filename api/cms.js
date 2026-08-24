@@ -144,15 +144,38 @@ function mdToHtml(src) {
     // blank line
     if (!line.trim()) { closeList(listStack); i++; continue; }
 
-    // paragraph (join following non-special lines)
-    closeList(listStack);
-    var para = [line];
+   // FAQ question + answer
+// A standalone bold question followed by an answer becomes:
+// <strong>Question?</strong><br>Answer
+if (/^\*\*[^*]+\?\*\*$/.test(line.trim()) && i + 1 < lines.length && lines[i + 1].trim()) {
+  closeList(listStack);
+
+  var question = line.trim();
+  var answer = [];
+  i++;
+
+  while (
+    i < lines.length &&
+    lines[i].trim() &&
+    !/^(#{2,4}\s|```|&gt;\s?|[-*+]\s|\d+[.)]\s|\||(-{3,}|\*{3,})\s*$)/.test(lines[i])
+  ) {
+    answer.push(lines[i]);
     i++;
-    while (
-      i < lines.length && lines[i].trim() &&
-      !/^(#{2,4}\s|```|&gt;\s?|[-*+]\s|\d+[.)]\s|\||(-{3,}|\*{3,})\s*$)/.test(lines[i])
-    ) { para.push(lines[i]); i++; }
-    out.push('<p>' + inline(para.join(' ')) + '</p>');
+  }
+
+  out.push('<p>' + inline(question) + '<br>' + inline(answer.join(' ')) + '</p>');
+  continue;
+}
+
+// paragraph (join following non-special lines)
+closeList(listStack);
+var para = [line];
+i++;
+while (
+  i < lines.length && lines[i].trim() &&
+  !/^(#{2,4}\s|```|&gt;\s?|[-*+]\s|\d+[.)]\s|\||(-{3,}|\*{3,})\s*$)/.test(lines[i])
+) { para.push(lines[i]); i++; }
+out.push('<p>' + inline(para.join(' ')) + '</p>');
   }
   closeList(listStack);
   return out.join('\n');
