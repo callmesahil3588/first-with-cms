@@ -13,7 +13,7 @@ If you hover over an organic result in a logged-out browser today, you won't see
 
 I've spent the past few days testing this across browsers and reading what the rank tracking vendors are publishing. Here's the honest read: this is not an algorithm update, it will not move your rankings, and there is nothing to fix on your site. But it does quietly change who can see Google's search results at scale — and that has real consequences for the dashboards you make decisions with.
 
-### TL;DR ### 
+### TL;DR ## 
 
 Google now wraps organic result links (and some SERP features) in a google.com/goto?url=[encoded] redirect.
 
@@ -58,8 +58,8 @@ That last one is the trap. A chart that breaks on 26 August is a collection arte
 The vendors moved fast. DemandSphere says organic ranking data is unaffected and it is rolling countermeasures out to SERP features. DataForSEO reported resolving direct destination URLs for 99.99% of SERPs, with the residual concentrated in AI Overviews, and shipped a fix for those on 28 August. Others will vary. Ask yours directly.
 
 We have a precedent for how this plays out. When Google removed the num=100 parameter in September 2025, an analysis of 319 properties by Tyler Gargula found 77.6% lost query count in Search Console and 87.7% lost impressions — largely because the tools appending that parameter had been generating phantom impressions all along. The mechanism differs here, but the shape is the same: collection gets more expensive, and the depth of your data absorbs the cost.
-**What it means for SEO
-**Almost nothing, directly. Say it plainly: google.com/goto is a click-path and data-access change. It does not touch crawling, indexing, ranking or relevance. No code change, no redirect rule, no schema update.
+**What it means for SEO**
+Almost nothing, directly. Say it plainly: google.com/goto is a click-path and data-access change. It does not touch crawling, indexing, ranking or relevance. No code change, no redirect rule, no schema update.
 What it changes is your measurement hygiene:
 Treat third-party rank data as provisional for a few weeks. Sparse or stale positions are a tooling story until proven otherwise.
 Cross-check every sudden movement against Search Console. Search Console is built from Google's own logs, not by reading a results page, so the redirect doesn't sit between it and its data. If a tracked position swings and impressions don't, believe Search Console.
@@ -76,7 +76,7 @@ The strategic read is bigger than one redirect. Google spent 2025 and 2026 progr
 
 The hedge is to own more of your measurement: Search Console, server logs (where AI crawlers like ChatGPT-User and GoogleOther-AI actually show up), and revenue. Those don't depend on Google's permission.
 
-**FAQ**
+### **FAQ**
 
 **What is google.com/goto?**
 A Google-owned redirect URL that sits between a search result and its destination page, with the destination encoded rather than written out.
