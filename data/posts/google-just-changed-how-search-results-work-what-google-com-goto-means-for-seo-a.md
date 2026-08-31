@@ -45,7 +45,7 @@ Before this change, a tool could read a results page once and extract every dest
 
 There's also legal context worth understanding, even if Google hasn't connected the dots publicly. In July 2026, a US federal court dismissed Google's DMCA claims against SerpApi, holding that bypassing anti-scraping controls to reach uncopyrighted search results isn't circumvention under that law. Google amended its complaint on 10 August, narrowing it to licensed content. One month after losing the legal route, a technical route shipped. That's a sequence, not a proven cause — but it's a sequence worth noticing.
 
-**What actually breaks**
+**What actually breaks**-
 The people carrying the cost here are tool providers, not site owners. What reaches you is whatever their data looks like afterwards.
 
 DemandSphere published a useful list of what fails when a system reads the link in a result and treats it as the destination:
