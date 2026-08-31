@@ -58,7 +58,8 @@ That last one is the trap. A chart that breaks on 26 August is a collection arte
 The vendors moved fast. DemandSphere says organic ranking data is unaffected and it is rolling countermeasures out to SERP features. DataForSEO reported resolving direct destination URLs for 99.99% of SERPs, with the residual concentrated in AI Overviews, and shipped a fix for those on 28 August. Others will vary. Ask yours directly.
 
 We have a precedent for how this plays out. When Google removed the num=100 parameter in September 2025, an analysis of 319 properties by Tyler Gargula found 77.6% lost query count in Search Console and 87.7% lost impressions — largely because the tools appending that parameter had been generating phantom impressions all along. The mechanism differs here, but the shape is the same: collection gets more expensive, and the depth of your data absorbs the cost.
-**What it means for SEO**
+
+**What it means for SEO** -
 Almost nothing, directly. Say it plainly: google.com/goto is a click-path and data-access change. It does not touch crawling, indexing, ranking or relevance. No code change, no redirect rule, no schema update.
 What it changes is your measurement hygiene:
 Treat third-party rank data as provisional for a few weeks. Sparse or stale positions are a tooling story until proven otherwise.
