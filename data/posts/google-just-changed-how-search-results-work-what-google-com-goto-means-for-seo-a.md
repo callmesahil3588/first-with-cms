@@ -66,7 +66,7 @@ Cross-check every sudden movement against Search Console. Search Console is buil
 Annotate 26 August in your reporting. Future-you will thank present-you.
 Watch referrer data, don't panic about it. The redirect stays on a Google domain, so GA4 should still classify these sessions as organic. Nobody has published measurements yet — so verify in your own property rather than assuming.
 
-**What it means for AEO and GEO**
+**What it means for AEO and GEO** -
 This is the part most coverage skips.
 Answer engines and generative engines need SERP data. Some AI systems ground their answers in live search results; a large share of the AEO and GEO tooling market — citation trackers, share-of-voice monitors, prompt-volume estimators — is built on top of SERP APIs that just got more expensive to run. If your AI visibility dashboard sources from a provider that hasn't adapted, its numbers are now suspect for the same reason your rank tracker's are.
 
