@@ -4,7 +4,7 @@ description: "Google confirmed it is routing search result links through google.
 banner: "/uploads/google-just-changed-how-search-results-work-what-google-com-goto-means-for-seo-a-mtfv2r01.svg"
 date: "2026-08-30"
 category: "Insights"
-draft: true
+draft: false
 ---
 
 **On 26 August 2026**, Google confirmed something SEOs had been quietly arguing about since June: search result links no longer point directly at your website. They point at Google first.
